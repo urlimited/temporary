@@ -1,0 +1,13 @@
+{
+    "name": "fabros/google_oauth",
+    "description": "Provides functionality for code verification flow in terms of GAuth",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "mt",
+            "email": "maxim.tsoy@fabros.com"
+        }
+    ],
+    "require": {}
+}
