@@ -2,11 +2,12 @@
 
 namespace Fabros\OAuth;
 
+use Fabros\OAuth\Contexts\GetUserResponseContext;
 use Fabros\OAuth\Contexts\OAuthContext;
+use Fabros\OAuth\Contexts\OAuthResponseContext;
 use Fabros\OAuth\Contracts\OAuthContract;
 use Fabros\OAuth\Exceptions\ProviderNotFoundException;
 use Fabros\OAuth\Providers\GoogleProvider;
-use Psr\Http\Message\ResponseInterface;
 
 final class OAuthFacade
 {
@@ -19,13 +20,25 @@ final class OAuthFacade
     /**
      * @throws ProviderNotFoundException
      */
-    public static function verifyCode(string $code): ResponseInterface
+    public static function verifyCode(string $code): OAuthResponseContext
     {
         if (is_null(self::$authProvider)) {
             throw new ProviderNotFoundException();
         }
 
         return self::$authProvider->verifyCode($code);
+    }
+
+    /**
+     * @throws ProviderNotFoundException
+     */
+    public static function getUserInfo(string $accessToken): GetUserResponseContext
+    {
+        if (is_null(self::$authProvider)) {
+            throw new ProviderNotFoundException();
+        }
+
+        return self::$authProvider->getUserInfo($accessToken);
     }
 
     /**
