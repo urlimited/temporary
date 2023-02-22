@@ -1,6 +1,6 @@
 {
-    "name": "fabros/google_oauth",
-    "description": "Provides functionality for code verification flow in terms of GAuth",
+    "name": "fabros/oauth",
+    "description": "Provides functionality for code verification flow in terms of OAuth",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -9,5 +9,23 @@
             "email": "maxim.tsoy@fabros.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": "^8.0",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fabros\\OAuth\\Contexts\\": "Contexts",
+            "Fabros\\OAuth\\Contracts\\": "Contracts",
+            "Fabros\\OAuth\\Exceptions\\": "Exceptions",
+            "Fabros\\OAuth\\Providers\\": "Providers",
+            "Fabros\\OAuth\\Tests\\Unit\\": "Tests/Unit"
+        },
+        "files": [
+            "./OAuthFacade.php"
+        ]
+    }
 }
