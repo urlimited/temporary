@@ -8,6 +8,7 @@ use Fabros\OAuth\Contexts\OAuthContext;
 use Fabros\OAuth\Contexts\OAuthResponseContext;
 use Fabros\OAuth\Contracts\OAuthContract;
 use Fabros\OAuth\Exceptions\ContextNotFoundException;
+use Fabros\OAuth\Contexts\RefreshTokenResponseContext;
 use GuzzleHttp\Client;
 
 final class GoogleProvider implements OAuthContract
@@ -91,9 +92,6 @@ final class GoogleProvider implements OAuthContract
                 ->get(
                     'https://www.googleapis.com/oauth2/v1/userinfo',
                     [
-                        'headers' => [
-                            'Content-Type' => 'application/x-www-form-urlencoded',
-                        ],
                         'query' => [
                             'access_token' => $accessToken,
                             'alt' => 'json'
@@ -119,5 +117,52 @@ final class GoogleProvider implements OAuthContract
         }
 
         return $gResponseContext;
+    }
+
+    public function refreshToken(string $refreshToken): RefreshTokenResponseContext
+    {
+        $response = json_decode(
+            (new Client())
+                ->post(
+                    'https://oauth2.googleapis.com/token',
+                    [
+                        'headers' => [
+                            'Content-Type' => 'application/x-www-form-urlencoded',
+                        ],
+                        'form_params' => [
+                            'client_id' => $this->clientId,
+                            'client_secret' => $this->clientSecret,
+                            'refresh_token' => $refreshToken,
+                            'grant_type' => 'refresh_token',
+                        ]
+                    ],
+                )
+                ->getBody()
+                ->getContents(),
+            true
+        );
+
+        return new RefreshTokenResponseContext(
+            access_token: $response['access_token'],
+            expires_in: $response['expires_in'],
+            scope: $response['scope'],
+            token_type: $response['token_type'],
+        );
+    }
+
+    public function revokeToken(string $accessToken): void
+    {
+        (new Client())
+            ->post(
+                'https://oauth2.googleapis.com/revoke',
+                [
+                    'headers' => [
+                        'Content-Type' => 'application/x-www-form-urlencoded',
+                    ],
+                    'query' => [
+                        'token' => $accessToken,
+                    ]
+                ],
+            );
     }
 }

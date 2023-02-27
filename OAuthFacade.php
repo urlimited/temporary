@@ -5,6 +5,7 @@ namespace Fabros\OAuth;
 use Fabros\OAuth\Contexts\GetUserResponseContext;
 use Fabros\OAuth\Contexts\OAuthContext;
 use Fabros\OAuth\Contexts\OAuthResponseContext;
+use Fabros\OAuth\Contexts\RefreshTokenResponseContext;
 use Fabros\OAuth\Contracts\OAuthContract;
 use Fabros\OAuth\Exceptions\ProviderNotFoundException;
 use Fabros\OAuth\Providers\GoogleProvider;
@@ -39,6 +40,30 @@ final class OAuthFacade
         }
 
         return self::$authProvider->getUserInfo($accessToken);
+    }
+
+    /**
+     * @throws ProviderNotFoundException
+     */
+    public static function refreshToken(string $accessToken): RefreshTokenResponseContext
+    {
+        if (is_null(self::$authProvider)) {
+            throw new ProviderNotFoundException();
+        }
+
+        return self::$authProvider->refreshToken($accessToken);
+    }
+
+    /**
+     * @throws ProviderNotFoundException
+     */
+    public static function revokeToken(string $accessToken): void
+    {
+        if (is_null(self::$authProvider)) {
+            throw new ProviderNotFoundException();
+        }
+
+        self::$authProvider->revokeToken($accessToken);
     }
 
     /**
